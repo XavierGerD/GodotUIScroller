@@ -7,10 +7,11 @@ This Godot node is a simple UI scroller that supports both mouse and touchscreen
 1. Add the component to your project.
 2. Instanciate the node in your scene.
 3. Resize the node to fit the area where you want the interaction.
-4. In the parent scene, call the `InitializeScroller` function.
+4. Add all the elements that you want to scroll as children to a separate Control node.
+5. In the parent scene, call the `InitializeScroller` function.
 Ex:
 ```func _ready() -> void:
 	$VerticalScroller.InitializeScroller($MapContainer, self)
  ```
  The first argument is the Target node, i.e. the control node that contains all the elements you want to scroll. The second argument is the parent node to that scrollable node.
- 5. Tah-dah! You are done. Go try it out!
+ 6. Tah-dah! You are done. Go try it out!
