@@ -9,9 +9,12 @@ var TotalDisplacementY
 var MousePosition = 0
 var LastMousePosition = 0
 var DeltaPosition = 0
+# Adjust the deceleration speed to your preference
 var DecelerationSpeed = 0.2
 onready var MinHeight = 0
 
+# Target is the Control Node that needs to be scrolled.
+# TargetParent is the parent of that node
 func InitializeScroller(Target, TargetParent):
 	CurrentTarget = Target
 	CurrentTargetParent = TargetParent
@@ -50,19 +53,27 @@ func _input(event):
 			UpdatePositionWithFinger(event)
 	else:
 		UpdatePositionWithMouse(event)
-		
+
+# Godot provides an API to get the speed of the dragged finger.
+# However, when swiping fast and short bursts, the speed returns 0.
+# In that case, we must enter an arbitrary value to compensate for
+# this faulty input. Adjsut this value to your preference.
 func UpdatePositionWithFinger(event):
 	if "position" in event:
 		MousePosition = event.position.y
 		if IsClicked:
+			# Adjust this denominator value to change the on-release drag speed 
 			var Speed = event.get_speed().y / 40
+			var SpeedCompensation = 150
 			if Speed == 0:
-				Speed = -150
+				Speed = -1 * SpeedCompensation
 				if MousePosition > LastMousePosition:
-					Speed = 150
+					Speed = SpeedCompensation
 			DeltaPosition = Speed
 			UpdatePosition(event)
-				
+
+# To get the speed of the dragged mouse, we simply calculate the
+# delta between the mouse position and its previous position.
 func UpdatePositionWithMouse(event):
 	if "position" in event:
 		MousePosition = event.position.y
@@ -71,7 +82,9 @@ func UpdatePositionWithMouse(event):
 				DeltaPosition = MousePosition - LastMousePosition
 				LastMousePosition = MousePosition
 				UpdatePosition(event)
-				
+
+# Update the target coordinates on a single axis relative to the
+# pointer position
 func UpdatePosition(event):
 		TotalDisplacementY = event.position.y - DeltaY
 		CurrentTarget.set_position(Vector2(CurrentTarget.get_position().x, TotalDisplacementY))
